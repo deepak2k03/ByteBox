@@ -1,9 +1,11 @@
 import express from "express";
 import { createWriteStream } from "fs";
+import { stat } from "fs/promises";
 import { readdir } from "fs/promises";
 import { rm } from "fs/promises";
 import { rename } from "fs/promises";
 import cors from "cors";
+
 
 const app = express();
 
@@ -14,9 +16,16 @@ app.use(express.json())
 app.use(cors())
 
 //Read
-app.get("/directory", async (req, res) => {
-  const filesList = await readdir("./storage");
-  res.json(filesList);
+app.get("/directory/:dirname?", async (req, res) => {
+  const {dirname}=req.params;
+  const fullDirPath=`./storage/${dirname ? dirname : ""}`
+  const filesList = await readdir(fullDirPath);
+  const resData=[];
+  for(const item of filesList){
+    const stats = await stat(`${fullDirPath}/${item}`);
+    resData.push({name:item, isDirectory:stats.isDirectory()});
+  }
+  res.json(resData);
 });
 
 
@@ -40,7 +49,7 @@ app.get("/files/:filename", (req, res) => {
 });
 
 //update 
-app.patch("/files:filename",async(req,res)=>{
+app.patch("/files/:filename",async(req,res)=>{
   const {filename}=req.params;
   await rename(`./storage/${filename}`,`./storage/${req.body.newFilename}`);
   res.json({message:"Renamed"});
