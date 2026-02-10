@@ -1,30 +1,40 @@
 import express from "express";
 import { createWriteStream } from "fs";
-import { rm } from "fs/promises";
+import { rm, writeFile } from "fs/promises";
 import { rename } from "fs/promises";
 import path from "path";
-
+import filesData from "../filesDB.json" with {type:"json"}
 
 const router=express.Router();
 
 //create file
-router.post("/*",(req,res)=>{
-  const filePath=path.join("/",req.params[0]);
-  console.log(req.params.filename);
-  const writeStream=createWriteStream(`./storage/${filePath}`);
+router.post("/:filename",(req,res)=>{
+  const {filename} = req.params;
+  const id=crypto.randomUUID();
+  const extension=path.extname(filename);
+  const fullFilename=`${id}${extension}`;
+  const writeStream=createWriteStream(`./storage/${fullFilename}`);
   req.pipe(writeStream);
-  req.on("end",()=>{
+  req.on("end",async ()=>{
+    filesData.push({
+        id,
+        extension,
+        name:filename
+    })
+    await writeFile('./filesDB.json',JSON.stringify(filesData));
     res.json({message:"File Uploaded"});
   })
 })
 
 
-router.get("/*", (req, res) => {
-  const filePath=path.join("/",req.params[0]);
+router.get("/:id", (req, res) => {
+  const {id} = req.params;
+  const fileData=filesData.find((file)=>file.id===id);
+  console.log(fileData)
   if (req.query.action === "download") {
     res.set("Content-Disposition", "attachment");
   }
-  res.sendFile(`${process.cwd()}/storage/${filePath}`,(err)=>{
+  res.sendFile(`${process.cwd()}/storage/${id}${fileData.extension}`,(err)=>{
     if(err) res.json({err:"File Not Found"})
   });
 });
