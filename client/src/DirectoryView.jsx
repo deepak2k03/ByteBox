@@ -6,8 +6,8 @@ function DirectoryView() {
   const [directoryItems, setDirectoryItems] = useState([]);
   const [progress, setProgress] = useState(0);
   const [newFilename, setNewFilename] = useState("");
+  const [newDirname, setNewDirname] = useState("");
   const {"*":dirPath} = useParams();
-  console.log(dirPath)
 
   async function getDirectoryItems() {
     const response = await fetch(`${BASE_URL}/directory/${dirPath}`);
@@ -63,6 +63,17 @@ function DirectoryView() {
     getDirectoryItems();
   }
 
+  async function handleCreateDirectory(e){
+    e.preventDefault();
+    const url=`${BASE_URL}/directory${dirPath ? "/" + dirPath : ""}/${newDirname}`;
+    const response = await fetch(url,{
+      method:"POST",
+    });
+    const data =await response.json();
+    setNewDirname("")
+    getDirectoryItems();
+  }
+
   return (
     <>
       <h1>My Files</h1>
@@ -73,6 +84,12 @@ function DirectoryView() {
         value={newFilename}
       />
       <p>Progress: {progress}%</p>
+      <form onSubmit={handleCreateDirectory}>
+        <input type="text" onChange={(e)=>setNewDirname(e.target.value)}
+        value={newDirname}
+        />
+        <button>Create Directory</button>
+      </form>
       {directoryItems.map(({name, isDirectory}, i) => (
         <div key={i}>
           {name} {isDirectory && (<Link to={`./${name}?action=open`}>Open</Link>)} 
@@ -93,5 +110,6 @@ function DirectoryView() {
     </>
   );
 }
+
 
 export default DirectoryView;
