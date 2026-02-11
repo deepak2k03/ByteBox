@@ -1,13 +1,14 @@
 [
     {
-        "id": 10,
-        "name": "test.png",
-        "parentDir": 321,
-        "size": 434
+        "id": "fbf02710-bf68-4728-8c67-2d7217a4bb8f",
+        "extension": ".js",
+        "name": "random.js",
+        "parentDirId": "1"
     },
     {
-        "id": "8091cc34-8267-4894-a709-39467cee7608",
+        "id": "618695fd-d0a9-468f-a018-e5b427492b42",
         "extension": ".js",
-        "name": "test2.js"
+        "name": "random2.js",
+        "parentDirId": "1"
     }
 ]
