@@ -1,12 +1,1 @@
-[
-    {
-        "id": "1",
-        "name": "root",
-        "parentDir": "null",
-        "files": [
-            "fbf02710-bf68-4728-8c67-2d7217a4bb8f",
-            "618695fd-d0a9-468f-a018-e5b427492b42"
-        ],
-        "directories": []
-    }
-]
+[{"id":"1","name":"root","parentDir":"null","files":["fbf02710-bf68-4728-8c67-2d7217a4bb8f"],"directories":[]}]
