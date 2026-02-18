@@ -48,17 +48,18 @@ router.post('/register', async (req, res, next) => {
 
 })
 
-router.post('/login', async(req, res, next)=>{
-  const {email, password} = req.body;
-  const user = usersData.find((user)=>user.email===email);
-  if(!user || user.password !== password){
-    return res.status(404).json({error:"Invalid Credentials"});
+router.post('/login', async (req, res, next) => {
+  const {email, password} = req.body
+  const user = usersData.find((user) => user.email === email)
+  if(!user || user.password !== password) {
+    return res.status(404).json({error: 'Invalid Credentials'})
   }
-  res.cookie('uid', user.id,{
-    httpOnly:true,
-    maxAge:60*1000*60*24*7,
-  });
-  res.json({message:"logged in"});
+  res.cookie('uid', user.id, {
+    httpOnly: true,
+    maxAge: 60 * 1000 * 60 * 24 * 7
+  })
+  res.json({message: 'logged in'})
 })
+
 
 export default router;

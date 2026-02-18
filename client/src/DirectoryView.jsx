@@ -42,8 +42,16 @@ function DirectoryView() {
    * Fetch directory contents
    */
   async function getDirectoryItems() {
-    const response = await fetch(`${BASE_URL}/directory/${dirId || ""}`);
+    const response = await fetch(`${BASE_URL}/directory/${dirId || ""}`, {
+      credentials: "include",
+    });
+
     const data = await response.json();
+
+    if (response.status === 401) {
+      navigate("/login");
+      return;
+    }
 
     // Set directory name
     if (data.name) {
@@ -179,6 +187,7 @@ function DirectoryView() {
     // Start upload
     const xhr = new XMLHttpRequest();
     xhr.open("POST", `${BASE_URL}/file/${dirId || ""}`, true);
+    xhr.withCredentials = true;
     xhr.setRequestHeader("filename", currentItem.name);
 
     xhr.upload.addEventListener("progress", (evt) => {
@@ -232,6 +241,7 @@ function DirectoryView() {
   async function handleDeleteFile(id) {
     await fetch(`${BASE_URL}/file/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     getDirectoryItems();
   }
@@ -239,6 +249,7 @@ function DirectoryView() {
   async function handleDeleteDirectory(id) {
     await fetch(`${BASE_URL}/directory/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     getDirectoryItems();
   }
@@ -253,6 +264,7 @@ function DirectoryView() {
       headers: {
         dirname: newDirname,
       },
+      credentials: "include",
     });
     setNewDirname("New Folder");
     setShowCreateDirModal(false);
@@ -278,6 +290,7 @@ function DirectoryView() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ newFilename: renameValue }),
+        credentials: "include",
       });
     } else {
       await fetch(`${BASE_URL}/directory/${renameId}`, {
@@ -286,6 +299,7 @@ function DirectoryView() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ newDirName: renameValue }),
+        credentials: "include",
       });
     }
 

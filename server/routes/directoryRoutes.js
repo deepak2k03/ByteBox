@@ -3,13 +3,14 @@ import { rm, writeFile } from "fs/promises";
 import directoriesData from '../directoriesDB.json' with {type: "json"}
 import filesData from '../filesDB.json' with {type: "json"}
 import usersData from '../usersDB.json' with {type: "json"}
-import { error } from "console";
+
 
 const router = express.Router();
 
 // Read
 router.get("/:id?", async (req, res) => {
-  const id  = req.params.id || directoriesData[0].id
+  const user = req.user
+  const id  = req.params.id || user.rootDirId
   const directoryData = directoriesData.find((directory) => directory.id === id)
   if(!directoryData) return res.status(404).json({message: "Directory not found!"})
   const files = directoryData.files.map((fileId) =>
@@ -22,7 +23,8 @@ router.get("/:id?", async (req, res) => {
 });
 
 router.post("/:parentDirId?", async (req, res, next) => {
-  const parentDirId = req.params.parentDirId || directoriesData[0].id
+  const user = req.user
+  const parentDirId = req.params.parentDirId || user.rootDirId
   const dirname = req.headers.dirname || 'New Folder'
   const id = crypto.randomUUID()
   const parentDir = directoriesData.find((dir) => dir.id === parentDirId)
@@ -33,6 +35,7 @@ router.post("/:parentDirId?", async (req, res, next) => {
     name: dirname,
     parentDirId,
     files: [],
+    userId: user.id,
     directories: []
   })
   try {
