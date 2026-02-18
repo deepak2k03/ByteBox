@@ -2,6 +2,8 @@ import express from "express";
 import { rm, writeFile } from "fs/promises";
 import directoriesData from '../directoriesDB.json' with {type: "json"}
 import filesData from '../filesDB.json' with {type: "json"}
+import usersData from '../usersDB.json' with {type: "json"}
+import { error } from "console";
 
 const router = express.Router();
 
