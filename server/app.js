@@ -9,7 +9,7 @@ import { connectDB } from "./db.js";
 
 try {
   const db = await connectDB();
-  console.log(db.namespace);
+  // console.log(db.namespace);
 
   const app = express();
 
@@ -22,11 +22,11 @@ try {
     }),
   );
 
-  app.use((req, res) => {
+  app.use((req, res, next) => {
     req.db = db;
     next();
   });
-  
+
   app.use("/directory", checkAuth, directoryRoutes);
   app.use("/file", checkAuth, fileRoutes);
   app.use("/user", userRoutes);
